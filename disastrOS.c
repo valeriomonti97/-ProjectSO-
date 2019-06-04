@@ -43,6 +43,7 @@ sigset_t signal_set;                       // process wide signal mask
 char signal_stack[STACK_SIZE];     
 volatile int disastrOS_time=0;
 
+int shared_sem_ID;
 
 void timerHandler(int j, siginfo_t *si, void *old_context) {
   swapcontext(&running->cpu_state, &interrupt_context);
@@ -303,6 +304,24 @@ int disastrOS_closeResource(int fd) {
 
 int disastrOS_destroyResource(int resource_id) {
   return disastrOS_syscall(DSOS_CALL_DESTROY_RESOURCE, resource_id);
+}
+
+/* Declare my new functions for semaphores*/
+
+void disastrOS_semOpen(int semnum){
+  disastrOS_syscall(DSOS_CALL_SEMOPEN, semnum);
+}
+
+void disastrOS_semPost(int semnum){
+  disastrOS_syscall(DSOS_CALL_SEMPOST, semnum);
+}
+
+void disastrOS_semClose(int semnum){
+  disastrOS_syscall(DSOS_CALL_SEMCLOSE, semnum);
+}
+
+void disastrOS_semWait(int semnum){
+  disastrOS_syscall(DSOS_CALL_SEMWAIT, semnum);
 }
 
 
