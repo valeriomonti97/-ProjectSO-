@@ -10,14 +10,14 @@ void internal_semOpen(){
   
   //Check if the running process has too much descriptors on its list
   if(running->sem_descriptors.size >=  MAX_NUM_SEMDESCRIPTORS_PER_PROCESS) {
-    running->syscall_retvalue = DSOS_ESEMOPEN_OUT_OF_BOUND_SEMDESCRIPTORS;
+    running->syscall_retvalue = DSOS_ESOPEN_OUT_OF_BOUND_SEMDESCRIPTORS;
     return;
   }
 
   //Check if the syscall value in the calling process pcb is admissible
   int ID = running->syscall_args[0];
   if(ID < 0) {
-    running->syscall_retvalue = DSOS_ESEMOPEN_SEMNUM_VALUE;
+    running->syscall_retvalue = DSOS_ESOPEN_SEMNUM_VALUE;
     return;
   }
 
@@ -27,7 +27,7 @@ void internal_semOpen(){
   if(!(sem0 = SemaphoreList_byId((SemaphoreList*)&semaphores_list, ID))) {
     sem0 = Semaphore_alloc(ID, 1);
     if(!sem0) {
-      running->syscall_retvalue = DSOS_ESEMOPEN_SEM_ALLOC;
+      running->syscall_retvalue = DSOS_ESOPEN_SEM_ALLOC;
       return;
     }
     List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem0);
@@ -36,25 +36,25 @@ void internal_semOpen(){
   //Alloc the SemDescriptor for sem associated with the running process
   SemDescriptor* semdesc = SemDescriptor_alloc(running->last_sem_fd, sem0, running);
   if(!semdesc) {
-    running->syscall_retvalue = DSOS_ESEMOPEN_SEMDESCRIPTOR_ALLOC;
+    running->syscall_retvalue = DSOS_ESOPEN_SEMDESCRIPTOR_ALLOC;
     return;
   }
 
   //Update last_sem_fd for the next running process
   running->last_sem_fd++;
 
-  //Add semdesc to the SemDescriptors list of the running process
-  List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*) semdesc);
-
   //Alloc Pointer of SemDescriptor for semdesc
   SemDescriptorPtr* semdesc_ptr = SemDescriptorPtr_alloc(semdesc);
   if(!semdesc_ptr) {
-    running->syscall_retvalue = DSOS_ESEMOPEN_SEMDESCRIPTORPTR_ALLOC;
+    running->syscall_retvalue = DSOS_ESOPEN_SEMDESCRIPTORPTR_ALLOC;
     return;
   }
 
   //Link semdesc_ptr with semdesc
   semdesc->ptr = semdesc_ptr;
+
+  //Add semdesc to the SemDescriptors list of the running process
+  List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*) semdesc);
 
   //Add semdesc_ptr to the descriptors_list of sem0
   List_insert(&sem0->descriptors, sem0->descriptors.last, (ListItem*) semdesc_ptr);
