@@ -15,7 +15,7 @@ void internal_semClose(){
 
   /*Take SemDescriptor to the list opened by running proc */
   SemDescriptor* sem_desc = SemDescriptorList_byFd(&running -> sem_descriptors, fd);
-  if (sem_desc){
+  if (!sem_desc){
     running -> syscall_retvalue = DSOS_ESEMCLOSE_SEMD_NOT_IN_PROCESS;
     return;
   }
@@ -25,9 +25,7 @@ void internal_semClose(){
 
   /*Get sem from sem_descr */
   Semaphore* s = sem_desc -> semaphore;
-  if(!s) {
-    return;
-  }
+  assert(s);
 
   /*Delete sem_desc_ptr from the list */
   SemDescriptorPtr* sem_desc_ptr = (SemDescriptorPtr*)List_detach(&s->descriptors, 
