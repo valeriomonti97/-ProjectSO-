@@ -24,7 +24,7 @@ void internal_semWait(){
   PCB* pcb = running;
   if (s->count < 0){
     SemDescriptorPtr* semdesc_ptr = SemDescriptorPtr_alloc(semdesc);
-    asser(semdesc_ptr);
+    assert(semdesc_ptr);
     List_insert(&s->waiting_descriptors, s->waiting_descriptors.last, (ListItem*)semdesc_ptr);
     running->status = Waiting;
     List_insert(&waiting_list, waiting_list.last, (ListItem*) running);
