@@ -310,20 +310,20 @@ int disastrOS_destroyResource(int resource_id) {
 
 /* Declare my new functions for semaphores*/
 
-int disastrOS_semOpen(int semnum){
+int disastrOS_mysemOpen(int semnum){
   return disastrOS_syscall(DSOS_CALL_SEMOPEN, semnum);
 }
 
-int disastrOS_semPost(int semnum){
+int disastrOS_mysemPost(int semnum){
   return disastrOS_syscall(DSOS_CALL_SEMPOST, semnum);
 }
 
-int disastrOS_semClose(int semnum){
+int disastrOS_mysemClose(int semnum){
   return disastrOS_syscall(DSOS_CALL_SEMCLOSE, semnum);
 }
 
-int disastrOS_semWait(int semnum){
-  returndisastrOS_syscall(DSOS_CALL_SEMWAIT, semnum);
+int disastrOS_mysemWait(int semnum){
+  return disastrOS_syscall(DSOS_CALL_SEMWAIT, semnum);
 }
 
 

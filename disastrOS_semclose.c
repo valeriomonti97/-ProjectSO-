@@ -28,8 +28,7 @@ void internal_semClose(){
   assert(s);
 
   /*Delete sem_desc_ptr from the list */
-  SemDescriptorPtr* sem_desc_ptr = (SemDescriptorPtr*)List_detach(&s->descriptors, 
-    (ListItem*)sem_desc->ptr);
+  SemDescriptorPtr* sem_desc_ptr = (SemDescriptorPtr*)List_detach(&s->descriptors, (ListItem*)sem_desc->ptr);
   assert(sem_desc_ptr);
 
   /*Free the memory */
@@ -38,7 +37,7 @@ void internal_semClose(){
 
   /*Check if there aren't other processes on semaphore, if it's OK remove it from the struct and free the mem */
   if (s->descriptors.size == 0){
-    s = (Semaphore*)List_detach(&semaphoneres_list, (ListItem*)s);
+    s = (Semaphore*)List_detach(&semaphores_list, (ListItem*)s);
     assert (s);
     Semaphore_free(s);
   }

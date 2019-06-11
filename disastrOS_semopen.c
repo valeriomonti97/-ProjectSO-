@@ -5,6 +5,7 @@
 #include "disastrOS_syscalls.h"
 #include "disastrOS_semaphore.h"
 #include "disastrOS_semdescriptor.h"
+#include "disastrOS_globals.h"
 
 void internal_semOpen(){
   
@@ -17,38 +18,28 @@ void internal_semOpen(){
   //Check if the syscall value in the calling process pcb is admissible
   int ID = running->syscall_args[0];
   if(ID < 0) {
-    running->syscall_retvalue = DSOS_ESOPEN_SEMNUM_VALUE;
+    running->syscall_retvalue = DSOS_ESEMOPEN_SEMNUM_VALUE;
     return;
   }
 
-
   //Check if the semaphore is already open, in that case we add it to the global list
-  Semaphore* sem0;
-  if(!(sem0 = SemaphoreList_byId((SemaphoreList*)&semaphores_list, ID))) {
+  Semaphore* sem0 = SemaphoreList_byId((SemaphoreList*) &semaphores_list, ID);
+  if(!sem0) {
     sem0 = Semaphore_alloc(ID, 1);
-    if(!sem0) {
-      running->syscall_retvalue = DSOS_ESOPEN_SEM_ALLOC;
-      return;
-    }
+    assert(sem0);
     List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem0);
   }
 
   //Alloc the SemDescriptor for sem associated with the running process
   SemDescriptor* semdesc = SemDescriptor_alloc(running->last_sem_fd, sem0, running);
-  if(!semdesc) {
-    running->syscall_retvalue = DSOS_ESOPEN_SEMDESCRIPTOR_ALLOC;
-    return;
-  }
+  assert(semdesc);
 
   //Update last_sem_fd for the next running process
   running->last_sem_fd++;
 
   //Alloc Pointer of SemDescriptor for semdesc
   SemDescriptorPtr* semdesc_ptr = SemDescriptorPtr_alloc(semdesc);
-  if(!semdesc_ptr) {
-    running->syscall_retvalue = DSOS_ESOPEN_SEMDESCRIPTORPTR_ALLOC;
-    return;
-  }
+  assert(semdesc_ptr);
 
   //Link semdesc_ptr with semdesc
   semdesc->ptr = semdesc_ptr;
