@@ -22,7 +22,7 @@ void childFunction(void* args){
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
-  for (int i = 0; i < disastrOS_getpid()++; i++){
+  for (int i = 0; i < disastrOS_getpid()+1; i++){
     int ret = disastrOS_mysemOpen(i);
     assert(ret >= 0);
   }
