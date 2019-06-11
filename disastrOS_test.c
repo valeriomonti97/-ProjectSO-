@@ -22,12 +22,14 @@ void childFunction(void* args){
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
-
-  for (int i=0; i<(disastrOS_getpid()+1); ++i){
-    printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
-    disastrOS_sleep((20-disastrOS_getpid())*5);
+  for (int i = 0; i < disastrOS_getpid()++; i++){
     int ret = disastrOS_mysemOpen(i);
-    assert (ret >= 0);
+    assert(ret >= 0);
+  }
+  disastrOS_printStatus();
+  for (int i = 0; i < disastrOS_getpid(); i++){
+    int ret = disastrOS_mysemClose(i);
+    assert(!ret);
   }
   disastrOS_printStatus();
   disastrOS_exit(disastrOS_getpid()+1);
