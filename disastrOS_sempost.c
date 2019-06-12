@@ -9,13 +9,15 @@
 void internal_semPost(){
   // do stuff :)
 
+  /* Get the fd from the PCB of the running proc and use it for the semdesc */
   int fd = running -> syscall_args[0];
-  SemDescriptor semdesc = SemDescriptorList_byFd(&running -> sem_descriptors, fd);
+  SemDescriptor* semdesc = SemDescriptorList_byFd(&running -> sem_descriptors, fd);
   if (!semdesc){
     running -> syscall_retvalue = DSOS_ESEMPOST_SEMD_NOT_IN_PROCESS;
     return;
   }
 
+  /*Increase the count of s. If its value is negative or 0, the proc in waiting list can be ready */
   Semaphore* s = semdesc -> semaphore;
   assert(sem);
   sem->count++;
@@ -28,6 +30,7 @@ void internal_semPost(){
     List_insert(&ready_list, ready_list.last, (ListItem*)pcb);
   }
 
+  /* Set the ret value of syscall */
   running->syscall_retvalue = 0;
 
 }
