@@ -69,6 +69,7 @@ void initFunction(void* args) {
   disastrOS_printStatus();
   int retval;
   int pid;
+  sh_semID = 2*ready_list.size;
   while(alive_children>0 && (pid=disastrOS_wait(0, &retval))>=0){ 
     disastrOS_printStatus();
     printf("initFunction, child: %d terminated, retval:%d, alive: %d \n",
