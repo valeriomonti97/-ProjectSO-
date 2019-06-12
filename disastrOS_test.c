@@ -32,6 +32,16 @@ void childFunction(void* args){
     assert(!ret);
   }
   disastrOS_printStatus();
+  int fd = disastrOS_mysemOpen(sh_semID);
+  assert(fd >= 0);
+  int ret = disastrOS_mysemWait(fd);
+  assert(!ret);
+  disastrOS_preempt();
+  ret = disastrOS_mysemPost(sh_semID);
+  assert(!ret);
+  disastrOS_printStatus();
+  ret = disastrOS_mysemClose(fd);
+  assert(!ret);
   disastrOS_exit(disastrOS_getpid()+1);
 }
 
