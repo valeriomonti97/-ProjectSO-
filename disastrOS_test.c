@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <poll.h>
 #include "assert.h"
-
+#include "disastrOS_globals.h"
 #include "disastrOS.h"
 
 // we need this to handle the sleep state

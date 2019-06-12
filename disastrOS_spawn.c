@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "disastrOS.h"
 #include "disastrOS_syscalls.h"
+#include <signal.h>
 
 // creates a new instance of the running_process
 // and puts it in the ready list
