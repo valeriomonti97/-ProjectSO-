@@ -19,25 +19,26 @@ void childFunction(void* args){
   printf("I will iterate a bit, before terminating\n");
   int type=0;
   int mode=0;
+  int ret;
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
   for (int i = 0; i < disastrOS_getpid()+1; i++){
-    int ret = disastrOS_mysemOpen(i);
+    ret = disastrOS_mysemOpen(i);
     assert(ret >= 0);
   }
   disastrOS_printStatus();
   for (int i = 0; i < disastrOS_getpid(); i++){
-    int ret = disastrOS_mysemClose(i);
+    ret = disastrOS_mysemClose(i);
     assert(!ret);
   }
   disastrOS_printStatus();
-  int fd = disastrOS_mysemOpen(sh_semID);
+  fd = disastrOS_mysemOpen(sh_semID);
   assert(fd >= 0);
-  int ret = disastrOS_mysemWait(fd);
+  ret = disastrOS_mysemWait(fd);
   assert(!ret);
   disastrOS_preempt();
-  ret = disastrOS_mysemPost(sh_semID);
+  ret = disastrOS_mysemPost(fd);
   assert(!ret);
   disastrOS_printStatus();
   ret = disastrOS_mysemClose(fd);

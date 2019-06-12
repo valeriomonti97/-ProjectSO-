@@ -20,9 +20,9 @@ void internal_semPost(){
 
   /*Increase the count of s. If its value is negative or 0, the proc in waiting list can be ready */
   Semaphore* s = semdesc -> semaphore;
-  assert(sem);
-  sem->count++;
-  if (sem->count <= 0){
+  assert(s);
+  s->count++;
+  if (s->count <= 0){
     SemDescriptorPtr* semdesc_ptr = (SemDescriptorPtr*)List_detach(&s->waiting_descriptors, s->waiting_descriptors.first);
     PCB* pcb = semdesc_ptr->descriptor->pcb;
     SemDescriptorPtr_free(semdesc_ptr);
