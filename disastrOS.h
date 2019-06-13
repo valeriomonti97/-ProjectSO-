@@ -40,8 +40,8 @@ int disastrOS_destroyResource(int resource_id);
 void disastrOS_printStatus();
 
 //my syscall
-int disastrOS_mysemClose(int semnum);
-int disastrOS_mysemOpen(int semnum);
-int disastrOS_mysemWait(int semnum);
-int disastrOS_mysemPost(int semnum);
+int disastrOS_mysemClose(int fd);
+int disastrOS_mysemOpen(int id);
+int disastrOS_mysemWait(int fd);
+int disastrOS_mysemPost(int fd);
 

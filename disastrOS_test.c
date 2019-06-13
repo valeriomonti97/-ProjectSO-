@@ -4,6 +4,13 @@
 #include "assert.h"
 #include "disastrOS_globals.h"
 #include "disastrOS.h"
+#include <stdlib.h>
+
+//error_helper
+void error_helper(int i){
+  fprintf(stderr, "Error in ChildFunction with code: %d", i);
+  abort();
+}
 
 // we need this to handle the sleep state
 void sleeperFunction(void* args){
@@ -25,24 +32,36 @@ void childFunction(void* args){
   printf("PID: %d, terminating\n", disastrOS_getpid());
   for (int i = 0; i < disastrOS_getpid()+1; i++){
     ret = disastrOS_mysemOpen(i);
-    assert(ret >= 0);
+    if (ret < 0){
+      error_helper(ret);
+    }
   }
   disastrOS_printStatus();
   for (int i = 0; i < disastrOS_getpid(); i++){
     ret = disastrOS_mysemClose(i);
-    assert(!ret);
+  if (ret){
+      error_helper(ret);
+    }
   }
   disastrOS_printStatus();
   fd = disastrOS_mysemOpen(sh_semID);
-  assert(fd >= 0);
+  if (fd < 0){
+      error_helper(ret);
+  }
   ret = disastrOS_mysemWait(fd);
-  assert(!ret);
+  if (ret){
+      error_helper(ret);
+  }
   disastrOS_preempt();
   ret = disastrOS_mysemPost(fd);
-  assert(!ret);
+  if (ret){
+      error_helper(ret);
+  }
   disastrOS_printStatus();
   ret = disastrOS_mysemClose(fd);
-  assert(!ret);
+  if (ret){
+      error_helper(ret);
+  }
   disastrOS_exit(disastrOS_getpid()+1);
 }
 
