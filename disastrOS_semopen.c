@@ -10,7 +10,7 @@
 void internal_semOpen(){
   
   //Check if the running process has too much descriptors on its list
-  if(running->sem_descriptors.size >=  MAX_NUM_SEMDESCRIPTORS_PER_PROCESS) {
+  if(running->sem_descriptors.size >=  MAX_NUM_SEMDESCRIPTORS_PER_PROCESS) {  //defined in disastrOS_constants (disastrOS_globals -> disastrOS_pcb)
     running->syscall_retvalue = DSOS_ESOPEN_OUT_OF_BOUND_SEMDESCRIPTORS;
     return;
   }

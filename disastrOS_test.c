@@ -30,6 +30,9 @@ void childFunction(void* args){
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
+
+  //TEST 1
+
   for (int i = 0; i < disastrOS_getpid()+1; i++){
     ret = disastrOS_mysemOpen(i);
     if (ret < 0){
@@ -44,23 +47,49 @@ void childFunction(void* args){
     }
   }
   disastrOS_printStatus();
+
+  //TEST 2
+
+  for (int i = 0; i < disastrOS_getpid()+1; ++i){
+    fd = disastrOS_mysemOpen(i);
+    if (fd < 0){
+        error_helper(ret);
+    }
+    ret = disastrOS_mysemWait(fd);
+    if (ret){
+        error_helper(ret);
+    }
+    disastrOS_preempt();
+    ret = disastrOS_mysemPost(fd);
+    if (ret){
+        error_helper(ret);
+    }
+    disastrOS_printStatus();
+    ret = disastrOS_mysemClose(fd);
+    if (ret){
+        error_helper(ret);
+    }
+  }
+
+  //TEST 3
+
   fd = disastrOS_mysemOpen(sh_semID);
   if (fd < 0){
-      error_helper(ret);
+    error_helper(ret);
   }
   ret = disastrOS_mysemWait(fd);
   if (ret){
-      error_helper(ret);
+    error_helper(ret);
   }
   disastrOS_preempt();
   ret = disastrOS_mysemPost(fd);
   if (ret){
-      error_helper(ret);
+    error_helper(ret);
   }
   disastrOS_printStatus();
   ret = disastrOS_mysemClose(fd);
   if (ret){
-      error_helper(ret);
+    error_helper(ret);
   }
   disastrOS_exit(disastrOS_getpid()+1);
 }
