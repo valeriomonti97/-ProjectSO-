@@ -11,13 +11,13 @@ void internal_semOpen(){
   
   //Check if the running process has too much descriptors on its list
   if(running->sem_descriptors.size >=  MAX_NUM_SEMDESCRIPTORS_PER_PROCESS) {  //defined in disastrOS_constants (disastrOS_globals -> disastrOS_pcb)
-    running->syscall_retvalue = DSOS_ESOPEN_OUT_OF_BOUND_SEMDESCRIPTORS;
+    running->syscall_retvalue = DSOS_ESOPEN_OUT_OF_BOUND_SEMDESCRIPTORS; //error code
     return;
   }
 
   //Check if the syscall value in the calling process pcb is admissible
   int ID = running->syscall_args[0];
-  if(ID < 0) {
+  if(ID < 0) {                                                /*If ID<0 ERROR*/
     running->syscall_retvalue = DSOS_ESEMOPEN_SEMNUM_VALUE;
     return;
   }
@@ -28,14 +28,13 @@ void internal_semOpen(){
     sem0 = Semaphore_alloc(ID, 1);
     assert(sem0);
     List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem0);
-  }
+  } 
 
+  if(running->last_sem_fd != 0) running->last_sem_fd++;   //Update last_sem_fd for the next running process
+                                                          //if last_sem_fd == 0 => it's the first sem
   //Alloc the SemDescriptor for sem associated with the running process
   SemDescriptor* semdesc = SemDescriptor_alloc(running->last_sem_fd, sem0, running);
   assert(semdesc);
-
-  //Update last_sem_fd for the next running process
-  running->last_sem_fd++;
 
   //Alloc Pointer of SemDescriptor for semdesc
   SemDescriptorPtr* semdesc_ptr = SemDescriptorPtr_alloc(semdesc);
@@ -51,7 +50,7 @@ void internal_semOpen(){
   List_insert(&sem0->descriptors, sem0->descriptors.last, (ListItem*) semdesc_ptr);
 
   //Set the return value of the syscall
-  running->syscall_retvalue = semdesc->fd;
+  running->syscall_retvalue = semdesc->fd; 
   
   return;
 

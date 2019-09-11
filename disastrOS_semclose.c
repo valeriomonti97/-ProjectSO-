@@ -8,7 +8,6 @@
 #include "disastrOS_globals.h"
 
 void internal_semClose(){
-  // do stuff :)
 
   /*Get the file descr of SemDescriptor that the process wants close */
   int fd = running -> syscall_args[0];
@@ -16,7 +15,7 @@ void internal_semClose(){
   /*Take SemDescriptor to the list opened by running proc */
   SemDescriptor* sem_desc = SemDescriptorList_byFd(&running -> sem_descriptors, fd);
   if (!sem_desc){
-    running -> syscall_retvalue = DSOS_ESEMCLOSE_SEMD_NOT_IN_PROCESS;
+    running -> syscall_retvalue = DSOS_ESEMCLOSE_SEMD_NOT_IN_PROCESS; /*The proc is already closed*/
     return;
   }
 

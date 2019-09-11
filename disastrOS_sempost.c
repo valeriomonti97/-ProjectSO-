@@ -8,21 +8,22 @@
 #include "disastrOS_globals.h"
 
 void internal_semPost(){
+
   // do stuff :)
 
   /* Get the fd from the PCB of the running proc and use it for the semdesc */
   int fd = running -> syscall_args[0];
   SemDescriptor* semdesc = SemDescriptorList_byFd(&running -> sem_descriptors, fd);
   if (!semdesc){
-    running -> syscall_retvalue = DSOS_ESEMPOST_SEMD_NOT_IN_PROCESS;
+    running -> syscall_retvalue = DSOS_ESEMPOST_SEMD_NOT_IN_PROCESS; /*The proc is already closed or in running or not exist*/
     return;
   }
 
-  /*Increase the count of s. If its value is negative or 0, the proc in waiting list can be ready */
+  /*Increase the count of s*/
   Semaphore* s = semdesc -> semaphore;
   assert(s);
   s->count++;
-  if (s->count <= 0){
+  if (s->count <= 0){                /* If its value is negative or 0, the proc in waiting list can be ready*/
     SemDescriptorPtr* semdesc_ptr = (SemDescriptorPtr*)List_detach(&s->waiting_descriptors, s->waiting_descriptors.first);
     PCB* pcb = semdesc_ptr->descriptor->pcb;
     SemDescriptorPtr_free(semdesc_ptr);

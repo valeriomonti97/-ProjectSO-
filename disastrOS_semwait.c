@@ -7,13 +7,14 @@
 #include "disastrOS_semdescriptor.h"
 
 void internal_semWait(){
+ 
   // do stuff :)
 
   /*For get the sem_d we need the fd from the PCB of the running process */
   int fd = running -> syscall_args[0];
   SemDescriptor* semdesc = SemDescriptorList_byFd(&running->sem_descriptors, fd);
   if (!semdesc){
-    running -> syscall_retvalue = DSOS_ESEMWAIT_SEMD_NOT_IN_PROCESS;
+    running -> syscall_retvalue = DSOS_ESEMWAIT_SEMD_NOT_IN_PROCESS;    /*The proc is already in wait or close*/
     return;
   }
 
@@ -22,7 +23,7 @@ void internal_semWait(){
   assert(s);
   s->count--;
   PCB* pcb = running;
-  if (s->count < 0){
+  if (s->count < 0){   /*The resources are finished for this semaphore => add the proc in list wait*/
     SemDescriptorPtr* semdesc_ptr = SemDescriptorPtr_alloc(semdesc);
     assert(semdesc_ptr);
     List_insert(&s->waiting_descriptors, s->waiting_descriptors.last, (ListItem*)semdesc_ptr);
