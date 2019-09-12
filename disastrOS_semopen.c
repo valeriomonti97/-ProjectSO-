@@ -30,11 +30,12 @@ void internal_semOpen(){
     List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem0);
   } 
 
-  if(running->last_sem_fd != 0) running->last_sem_fd++;   //Update last_sem_fd for the next running process
-                                                          //if last_sem_fd == 0 => it's the first sem
   //Alloc the SemDescriptor for sem associated with the running process
   SemDescriptor* semdesc = SemDescriptor_alloc(running->last_sem_fd, sem0, running);
   assert(semdesc);
+
+  //Update last_sem_fd for the next running process
+  running->last_sem_fd++;
 
   //Alloc Pointer of SemDescriptor for semdesc
   SemDescriptorPtr* semdesc_ptr = SemDescriptorPtr_alloc(semdesc);

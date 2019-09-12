@@ -33,6 +33,7 @@ void childFunction(void* args){
 
   //TEST 1
 
+  printf("********** TEST 1 **********");
   for (int i = 0; i < disastrOS_getpid()+1; i++){
     ret = disastrOS_mysemOpen(i);
     if (ret < 0){
@@ -50,6 +51,7 @@ void childFunction(void* args){
 
   //TEST 2
 
+  printf("********** TEST 2 **********");
   for (int i = 0; i < disastrOS_getpid()+1; ++i){
     fd = disastrOS_mysemOpen(i);
     if (fd < 0){
@@ -73,6 +75,7 @@ void childFunction(void* args){
 
   //TEST 3
 
+  printf("********** TEST 3 **********");
   fd = disastrOS_mysemOpen(sh_semID);
   if (fd < 0){
     error_helper(ret);
